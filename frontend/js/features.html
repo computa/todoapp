@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To Do App | Features</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous" />
+
+    <!-- Your styles -->
+    <link rel="stylesheet" href="/frontend/css/styles.css" />
+
+    <!-- FullCalendar (CSS) -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet" />
+    <!-- [ADD AFTER BOOTSTRAP CSS] -->
+
+    <style>
+      /* Small calendar polish to fit your theme */
+      #calendar {
+        max-width: 1100px;
+        margin: 40px auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        padding: 12px;
+      }
+      .fc .fc-toolbar-title { font-weight: 700; }
+      .fc-event.completed {
+        opacity: 0.6;
+        text-decoration: line-through;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ↓ Navbar ↓ -->
+    <nav class="navbar navbar-expand-lg">
+      <div class="container">
+        <a href=".index.html" class="navbar-brabd">
+          <img src="/frontend/images/logo-icon.svg" alt="Logo" height="50px" width="auto" />
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle">
+          <img src="/frontend/images/menu-icon.svg" alt="Hamburger Icon" height="40px" width="auto" />
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a href="./index.html" class="nav-link">Home</a></li>
+            <li class="nav-item"><a href="./features.html" class="nav-link active">Features</a></li>
+            <li class="nav-item"><a href="./pricing.html" class="nav-link">Pricing</a></li>
+            <li class="nav-item d-block d-lg-none"><a href="./login.html" class="nav-link">Login</a></li>
+            <li class="nav-item d-block d-lg-none"><a href="./SignUp.html" class="nav-link">SignUp</a></li>
+          </ul>
+          <div class="d-flex gap-2 ms-3 d-lg-block d-none">
+            <a href="./login.html" class="btn btn-outline-light">Login</a>
+            <a href="./signup.html" class="btn btn-outline-light">SignUp</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <!-- ↑ Navbar ↑ -->
+
+    <!-- ↓ Calendar Section ↓ -->
+    <section class="py-5">
+      <div class="container">
+        <h1 class="text-center mb-4">Your Tasks Calendar</h1>
+        <div id="calendar"></div>
+      </div>
+    </section>
+    <!-- ↑ Calendar Section ↑ -->
+
+    <!-- ↓ Footer ↓ -->
+    <footer>
+      <div class="container py-5">
+        <div class="d-flex justify-content-between flex-column gap-5 gap-md-0 flex-md-row align-items-center px-3 mb-5">
+          <a href="./index.html">
+            <img src="/frontend/images/logo-icon.svg" alt="Logo" height="120px" width="auto" />
+          </a>
+          <div class="col-12 col-sm-8 col-md-7 col-lg-5 col-xl-4">
+            <h1 class="text-white mb-3 text-center text-md-start">Subscribe to our Newsletter</h1>
+            <div class="input-group">
+              <input type="email" class="form-control" placeholder="Enter Your Email">
+              <button class="btn btn-secondary">Subscribe</button>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-center flex-column gap-3 flex-md-row align-items-center">
+          <a class="nav-link" href="#">Privacy Policy</a>
+          <p class="m-0 d-none d-md-block">|</p>
+          <a class="nav-link" href="#">Terms of Service</a>
+          <p class="m-0 d-none d-md-block">|</p>
+          <p class="m-0"> ListMe &copy; 2025 All Right Reserved</p>
+        </div>
+      </div>
+    </footer>
+    <!-- ↑ Footer ↑ -->
+
+    <!-- ↓ Scripts ↓ -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+
+    <!-- FullCalendar (JS) -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+
+    <script>
+      // Change this if your backend route differs
+      const TASKS_API = "/api/tasks";
+
+      // Map your task model -> FullCalendar event
+      function taskToEvent(t) {
+        // expected fields from your backend:
+        // { title, dueDate, description, completed }
+        const start = t.dueDate || t.due || t.createdOn;
+        return {
+          id: t._id || t.id,
+          title: t.title || "Untitled Task",
+          start,               // ISO date string or "YYYY-MM-DD"
+          allDay: true,        // typical for due dates
+          classNames: t.completed ? ["completed"] : [],
+          extendedProps: {
+            description: t.description || ""
+          }
+        };
+      }
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        const calendarEl = document.getElementById("calendar");
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: "dayGridMonth",
+          headerToolbar: {
+            left: "prev,next today",
+            center: "title",
+            right: "dayGridMonth,timeGridWeek,listWeek"
+          },
+          nowIndicator: true,
+          navLinks: true,
+          events: async (info, success, failure) => {
+            try {
+              const res = await fetch(TASKS_API, { credentials: "include" });
+              if (!res.ok) throw new Error("Failed to load tasks");
+              const data = await res.json();
+              const events = Array.isArray(data) ? data.map(taskToEvent)
+                          : Array.isArray(data.tasks) ? data.tasks.map(taskToEvent)
+                          : [];
+              success(events);
+            } catch (e) {
+              console.error(e);
+              failure(e);
+            }
+          },
+          eventClick: (info) => {
+            const d = info.event.extendedProps.description || "No description";
+            const due = info.event.start ? info.event.start.toDateString() : "N/A";
+            alert(`${info.event.title}\nDue: ${due}\n\n${d}`);
+          }
+        });
+
+        calendar.render();
+        // [ADD THIS LINE BELOW]
+        document.addEventListener("tasksUpdated", () => calendar.refetchEvents());
+      });
+    </script>
+
+    <!-- [ADD AFTER BOOTSTRAP JS] -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+
+    <!-- [ADD CALENDAR INIT BEFORE </body>] -->
+<script>
+  // Same backend your frontend uses in api.js
+  const TASKS_API = "http://localhost:3000/tasks";
+
+  // Convert your task shape -> calendar event
+  function taskToEvent(t) {
+    // your API returns: { _id, title, description, dueDate, createdOn, completed }
+    const start = t.dueDate || t.createdOn; // prefer dueDate
+    return {
+      id: t._id,
+      title: t.title || "Untitled Task",
+      start: start,            // ISO string or YYYY-MM-DD
+      allDay: true,
+      classNames: t.completed ? ["completed"] : [],
+      extendedProps: { description: t.description || "" }
+    };
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const el = document.getElementById("calendar");
+    const calendar = new FullCalendar.Calendar(el, {
+      initialView: "dayGridMonth",
+      headerToolbar: {
+        left: "prev,next today",
+        center: "title",
+        right: "dayGridMonth,timeGridWeek,listWeek"
+      },
+      events: async (_info, success, failure) => {
+        try {
+          const res = await fetch(TASKS_API, { credentials: "include" });
+          if (!res.ok) throw new Error("Failed to load tasks");
+          const data = await res.json();
+          const tasks = Array.isArray(data) ? data : (data.tasks || []);
+          success(tasks.map(taskToEvent));
+        } catch (e) {
+          console.error(e);
+          failure(e);
+        }
+      },
+      eventClick: (info) => {
+        const d = info.event.extendedProps.description || "No description";
+        const due = info.event.start ? info.event.start.toDateString() : "N/A";
+        alert(`${info.event.title}\nDue: ${due}\n\n${d}`);
+      }
+    });
+    calendar.render();
+  });
+</script>
+
+
+  </body>
+</html>
