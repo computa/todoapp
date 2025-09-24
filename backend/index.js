@@ -43,7 +43,7 @@ const Task = mongoose.model("Task", taskSchema);
   try {
     mongoose.set("autoIndex", false);
     await mongoose.connect(
-      process.env.MONGODB_URI || process.env.MONGO_URI || process.env.MONGO_URL
+      process.env.MONGO_URI
     );
     console.log("MongoDB Connected");
 
@@ -62,12 +62,12 @@ const Task = mongoose.model("Task", taskSchema);
 // ---------------------------------- ↓ API ROUTES ↓ --------------------------------------
 
 // Root route
-app.get("/", (req, res) => {
-  res.send("Todo API is running. Try GET /tasks");
-});
+// app.get("/", (req, res) => {
+//   res.send("Todo API is running. Try GET /tasks");
+// });
 
-// Health check
-app.get("/healthz", (req, res) => res.send("ok"));
+// // Health check
+// app.get("/healthz", (req, res) => res.send("ok"));
 
 // -------------------------------------- TASK ROUTES --------------------------------------
 
