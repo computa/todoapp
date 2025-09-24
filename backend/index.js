@@ -61,15 +61,17 @@ const Task = mongoose.model("Task", taskSchema);
 
 // ---------------------------------- ↓ API ROUTES ↓ --------------------------------------
 
-//Example
-// app.get("/example", async (req, res) => {
-//   res.send("Hello! I am a message from the backend");
-// });
+// Root route
+app.get("/", (req, res) => {
+  res.send("Todo API is running. Try GET /tasks");
+});
+
+// Health check
+app.get("/healthz", (req, res) => res.send("ok"));
 
 // -------------------------------------- TASK ROUTES --------------------------------------
 
 // Get all the task
-
 app.get("/tasks", async (req, res) => {
   try {
     const { sortBy } = req.query; // ?sortBy=dueDate or ?sortBy=createdOn
@@ -161,7 +163,6 @@ app.delete("/tasks/delete/:id", async (req, res) => {
 });
 
 // To edit task
-
 app.put("/tasks/update/:id", async (req, res) => {
   try {
     const taskId = req.params.id;
