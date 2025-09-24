@@ -21,28 +21,6 @@ console.log('Mongo-like env keys I see:',
   Object.keys(process.env).filter(k => /MONGO|DATABASE_URL/i.test(k))
 );
 
-
-
-// connectDatabase();
-
-(async () => {
-  try {
-    mongoose.set("autoIndex", false);
-    await mongoose.connect(process.env.MONGO_URI || process.env.MONGO_URL);
-    console.log("MongoDB Connected");
-
-    await Task.syncIndexes();
-    console.log(" Indexes created");
-
-    app.listen(port, () => {
-      console.log(`To Do App is live on port ${port}`);
-    });
-  } catch (error) {
-    console.error("X Startup error:", error);
-    process.exit(1); //Shut down the server
-  }
-})();
-
 // Define the task Schema (data structure)
 
 const taskSchema = new mongoose.Schema({
@@ -59,6 +37,28 @@ taskSchema.index({ createdOn: 1 });
 // Create a "Task" model to be used in the database
 const Task = mongoose.model("Task", taskSchema);
 
+// connectDatabase();
+
+(async () => {
+  try {
+    mongoose.set("autoIndex", false);
+    await mongoose.connect(
+      process.env.MONGODB_URI || process.env.MONGO_URI || process.env.MONGO_URL
+    );
+    console.log("MongoDB Connected");
+
+    await Task.syncIndexes();
+    console.log(" Indexes created");
+
+    app.listen(port, () => {
+      console.log(`To Do App is live on port ${port}`);
+    });
+  } catch (error) {
+    console.error("X Startup error:", error);
+    process.exit(1); //Shut down the server
+  }
+})();
+
 // ---------------------------------- ↓ API ROUTES ↓ --------------------------------------
 
 //Example
@@ -67,28 +67,19 @@ const Task = mongoose.model("Task", taskSchema);
 // });
 
 // -------------------------------------- TASK ROUTES --------------------------------------
-// let taskId = 1;
-// const tasks = [
-//   { id: 1, completed: false, title: "Wash car", description: "My car is filthy and needs to be washed", dueDate: "10/05/1025", createdOn: "28/072025" },
-//   { id: 2, completed: false, title: "Clean car", description: "My car is filthy and needs to be cleaned", dueDate: "10/05/1025", createdOn: "28/072025" },
-//   { id: 3, completed: false, title: "Dust car", description: "My car is filthy and needs to be dusted", dueDate: "10/05/1025", createdOn: "28/072025" },
-//   { id: 4, completed: true, title: "Vacume car", description: "My car is filthy and needs to be vacummed", dueDate: "10/05/1025", createdOn: "28/072025" },
-//   { id: 5, completed: true, title: "Oil car", description: "My car is filthy and needs to be oiled", dueDate: "10/05/1025", createdOn: "28/072025" },
-//   { id: 6, completed: false, title: "Wipe car", description: "My car is filthy and needs to be wipped", dueDate: "10/05/1025", createdOn: "28/072025" },
-// ];
 
 // Get all the task
 
 app.get("/tasks", async (req, res) => {
   try {
-    const { sortBy } = req.query; // ?sortBy=duedate or ?sortBy=DateCreated
+    const { sortBy } = req.query; // ?sortBy=dueDate or ?sortBy=createdOn
 
     let sortOption = {};
 
     if (sortBy === "dueDate") {
-      sortOption = { dueDate: 1 }; //Ascending\
-    } else if (sortBy === "dateCreated") {
-      sortOption = { dateCreated: 1 };
+      sortOption = { dueDate: 1 }; //Ascending
+    } else if (sortBy === "createdOn") {
+      sortOption = { createdOn: 1 };
     }
 
     const tasks = await Task.find({}).sort(sortOption);
