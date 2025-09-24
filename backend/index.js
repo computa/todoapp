@@ -16,6 +16,13 @@ app.use(cors("*"));
 
 // ---------------------------------- ↓ DATABASE CONNECTION ↓ --------------------------------------
 
+console.log('cwd:', process.cwd());
+console.log('Mongo-like env keys I see:',
+  Object.keys(process.env).filter(k => /MONGO|DATABASE_URL/i.test(k))
+);
+
+
+
 // connectDatabase();
 
 (async () => {

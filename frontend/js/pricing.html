@@ -48,11 +48,88 @@
 
     <!-- ↓ Hero ↓ -->
 
-   <section class="p-5 d-flex justify-content-center align-items-center flex-column pageNotReady">
-    <h1 class="text-center mb-5">Oops! This page is not ready yet!</h1>
-    <a href="./index.html" class="text-black">Go home</a>
+   <!-- ↓ Pricing Section with Toggle ↓ -->
+<section class="p-5 bg-light">
+  <div class="container">
 
-   </section>
+    <h1 class="text-center mb-4">Choose Your Plan</h1>
+
+    <!-- Toggle -->
+    <div class="d-flex justify-content-center align-items-center gap-3 mb-4">
+      <span class="fw-semibold">Monthly</span>
+      <div class="form-check form-switch m-0">
+        <input class="form-check-input" type="checkbox" id="billingToggle" />
+      </div>
+      <span class="fw-semibold">Yearly <small class="text-success">(2 months free)</small></span>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+
+      <!-- Basic -->
+      <div class="col">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body text-center">
+            <h3 class="card-title">Basic</h3>
+            <h2 class="text-primary">
+              $<span class="price" data-monthly="9" data-yearly="90">9</span>
+              <span class="price-period">/mo</span>
+            </h2>
+            <p class="text-muted">Perfect for individuals just getting started.</p>
+            <ul class="list-unstyled">
+              <li>✔ 5 Tasks per day</li>
+              <li>✔ 1 Project</li>
+              <li>✔ Basic Support</li>
+            </ul>
+            <a href="./signup.html" class="btn btn-outline-primary mt-3">Get Started</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pro -->
+      <div class="col">
+        <div class="card h-100 shadow-lg border-2 border-primary">
+          <div class="card-body text-center">
+            <h3 class="card-title">Pro</h3>
+            <h2 class="text-primary">
+              $<span class="price" data-monthly="29" data-yearly="290">29</span>
+              <span class="price-period">/mo</span>
+            </h2>
+            <p class="text-muted">Best for professionals managing multiple tasks.</p>
+            <ul class="list-unstyled">
+              <li>✔ Unlimited Tasks</li>
+              <li>✔ Up to 10 Projects</li>
+              <li>✔ Priority Support</li>
+            </ul>
+            <a href="./signup.html" class="btn btn-primary mt-3">Go Pro</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enterprise -->
+      <div class="col">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body text-center">
+            <h3 class="card-title">Enterprise</h3>
+            <h2 class="text-primary">
+              $<span class="price" data-monthly="99" data-yearly="990">99</span>
+              <span class="price-period">/mo</span>
+            </h2>
+            <p class="text-muted">For teams and companies needing full features.</p>
+            <ul class="list-unstyled">
+              <li>✔ Unlimited Tasks & Projects</li>
+              <li>✔ Team Collaboration</li>
+              <li>✔ Dedicated Account Manager</li>
+            </ul>
+            <a href="./signup.html" class="btn btn-outline-primary mt-3">Contact Sales</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<!-- ↑ Pricing Section with Toggle ↑ -->
+
 
 
 
@@ -86,5 +163,28 @@
     <!-- ↑ Footer ↑ -->
     <!-- ↓ Scripts ↓ -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+    <script>
+  (function () {
+    const toggle = document.getElementById('billingToggle');
+    const prices = document.querySelectorAll('.price');
+    const periods = document.querySelectorAll('.price-period');
+
+    function applyPricing(yearly) {
+      prices.forEach(p => {
+        const monthly = p.getAttribute('data-monthly');
+        const yearlyVal = p.getAttribute('data-yearly');
+        p.textContent = yearly ? yearlyVal : monthly;
+      });
+      periods.forEach(s => s.textContent = yearly ? '/yr' : '/mo');
+    }
+
+    // Init (default monthly)
+    applyPricing(false);
+
+    // Toggle handler
+    toggle.addEventListener('change', (e) => applyPricing(e.target.checked));
+  })();
+</script>
+
   </body>
 </html>
